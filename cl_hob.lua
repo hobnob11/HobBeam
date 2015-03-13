@@ -9,7 +9,7 @@ local HBeamTable = {}
 --now I need to somehow "hook" myself onto my own net message 
 
 --it would be far to easy if copying this over worked
-local void function PushToSST(Changes)
+local void function PushToCST(Changes)
 	--loop for every change table 
 	for I = 0 , #Changes do
 		--make sure the beam being changed is valid
@@ -27,7 +27,7 @@ net.Receive("HobNetMsg", function(len)
 	local Queue = {}
 	Queue = net.ReadTable()
 	--TODO: REWRITE HANDELING OF DATA
-	PushToSST(Queue)
+	PushToCST(Queue)
 end)
 
 hook.Add("PreDrawTranslucentRenderables","HobBeamHook",function()

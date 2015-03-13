@@ -7,6 +7,17 @@ local HBeamTable = {}
 -- i could have a grave mis-understanding of how net messages work...
 util.AddNetworkString("HobNetMsg")
 
+--    |----------------------------------------------------------| -this table is confusing as shit so here goes
+--    |                       HBeamTable{}                       | This table is global to all e2's for everyone on the server
+--    |----------------------------------------------------------| it contains a table of all of the e2's that have created beams
+--    |  ["ownerE2"]=1   |   ["ownerE2"]=2   |   ["ownerE2"]=3   |-these tables are stored using the related e2 entities as keys 
+--    |------------------|-------------------|-------------------| and contain all of the information for the beams that that e2 has created 
+--    |    ["index"]=1   |    ["index"]=1    |    ["index"]=1    |
+--    |    ["index"]=2   |    ["index"]=2    |    ["index"]=2    | -The individual beams are stored as tables with the beams index as the key.
+--    |    ["index"]=3   |    ["index"]=3    |    ["index"]=3    | the individual args (startPos,color etc..) are stored in this table with a 
+--    |    ["index"]=4   |    ["index"]=4    |    ["index"]=4    | string of the name of the arg as the key. 
+
+
 print("HOB SERVERSIDE INIT")
 --push to ServerSideTable
 
@@ -82,7 +93,9 @@ end
 local function NetMessage(self)
 	net.Start("HobNetMsg")
 	local Queue = self.data.Queue
-	for i=1,#Queue do
+	local QueueLength = #self.data.Queue
+	net.WriteUInt(QueueLength,10)
+	for i=1,QueueLength do
 		local ENUM = Queue[i]["ENUM"]
 		if ENUM == 0 then 
 			--CreateBeam - ALL THE THINGS
