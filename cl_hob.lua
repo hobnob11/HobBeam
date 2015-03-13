@@ -12,13 +12,8 @@ net.Receive("HobNetMsg", function(len)
 	Queue = net.ReadTable()
 	for I = 1 , #Queue do 
 		local index = Queue[I]["index"]
-		for J = 1 , 6 do
-			HBeamTable[index]["startPos"] = Queue[I]["StartPos"]
-			HBeamTable[index]["EndPos"] = Queue[I]["EndPos"]
-			HBeamTable[index]["width"] = Queue[I]["width"]
-			HBeamTable[index]["material"] = Queue[I]["material"]
-			HBeamTable[index]["textureScale"] = Queue[I]["textureScale"]
-			HBeamTable[index]["color"] = Queue[I]["color"]
+		for Key , Value in pairs(Queue[I]) do
+			HBeamTable[index][Key] = Value
 		end
 	end
 end)
