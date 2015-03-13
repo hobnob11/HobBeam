@@ -54,13 +54,40 @@ end
 -- i could have a grave mis-understanding of how net messages work...
 util.AddNetworkString("HobNetMsg")
 
---gets the queue of information to be sent to the client, puts it in HobNetMsg and sends it
---probably...
+--
+-- Gets the queue of information to be sent to the client, puts it in HobNetMsg and sends it
+--
+
+-- The datatypes array needs to be updated if datatypes change, or are added/removed.
+local dataTypes = {
+	index = "number",
+	startpos = "vector",
+	endpos = "vector",
+	width = "number",
+	material = "string",
+	texturescale = "number",
+	color = "vector"
+}
+-- This will loop through and write the NAME (e.g: startpos) of what's being updated, 
+-- then what's actually being updated (e.g: vec(1,2,3))
 local function NetMessage(self)
 	net.Start("HobNetMsg")
-	net.WriteTable(self.data.Queue)
+		for k,v in pairs(self.data.Queue) do
+			-- net.WriteTable(self.data.Queue)
+			net.WriteString(k)
+
+			if datatypes[k] == "number" then net.WriteNumber(v) end
+			elseif datatypes[k] == "vector" then net.WriteVector(v) end
+			elseif datatypes[k] == "string" then net.WriteString(v) end
+		end
 	net.Broadcast()
 end
+
+--local function NetMessage(self)
+--	net.Start("HobNetMsg")
+--	net.WriteTable(self.data.Queue)
+--	net.Broadcast()
+--end
 	
 		
 
