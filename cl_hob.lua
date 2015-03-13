@@ -3,6 +3,9 @@
 E2Helper.Descriptions["createHBeam(nvvnsnxv4)"] = "Creates a beam using the drawBeam function, made by hobnob :D"
 --setHBeamPos(index, vector startPos, vector endPos)
 E2Helper.Descriptions["setHBeamPos(nvv)"] = "Sets the position of the Hob Beam! "
+--e2function void killHBeam(index)
+E2Helper.Descriptions["killHBeam(n)"] = "Kills the beam with given index"
+
 
 print("HOB CLIENTSIDE INIT")
 local HBeamTable = {}
@@ -64,10 +67,16 @@ net.Receive("HobNetMsg", function(len)
 	PushToCST(Queue,e2id)
 end)
 net.Receive("HobKillMsg", function(len)
-	local e2id = net.ReadUInt(16)
-	print(e2id)
-	if(e2id~=nil) then
-		HBeamTable[e2id] = nil
+	local killAll = net.ReadBool()
+	local e2id
+	local index 
+	if KillAll then 
+		e2id = net.ReadUInt(16)
+		if e2id~=nil then HBeamTable[e2id] = nil end
+	else
+		e2id = net.ReadUInt(16)
+		index = net.ReadUInt(12)
+		if index~=nil then HBeamTable[e2id][index] = nil end
 	end
 end)
 

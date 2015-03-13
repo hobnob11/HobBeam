@@ -49,7 +49,7 @@ local void function PushToSST(Changes,e2id)
 		end
 	end
 end
-
+__e2setcost(30)
 e2function void createHBeam(index, vector startPos, vector endPos, width, string material, textureScale, vector4 color)
 	--queue the information for the client somehow
 	local Table2 = {}
@@ -66,7 +66,7 @@ e2function void createHBeam(index, vector startPos, vector endPos, width, string
 	self.data.Pending = true
 	
 end
-
+__e2setcost(10)
 e2function void setHBeamPos(index, vector startPos, vector endPos)
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity:EntIndex()
@@ -77,7 +77,15 @@ e2function void setHBeamPos(index, vector startPos, vector endPos)
 	self.data.Queue[#self.data.Queue+1]=Table2
 	self.data.Pending = true 
 end
-
+__e2setcost(2)
+e2function void killHBeam(index)
+	local e2id = self.entity:EntIndex()
+	net.Start("HobKillMsg")
+	net.WriteBool(false)
+	net.WriteUInt(e2id,16)
+	net.WriteUInt(index,12)
+	net.Broadcast()
+end
 
 --------------------------------------------------------
 -- Callbacks
@@ -122,6 +130,7 @@ end
 
 registerCallback("destruct",function(self)
 	net.Start("HobKillMsg")
+	net.WriteBool(true)
 	net.WriteUInt(self.entity:EntIndex(),16)
 	net.Broadcast()
 end)
