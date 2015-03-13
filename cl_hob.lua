@@ -66,7 +66,7 @@ end)
 net.Receive("HobKillMsg", function(len)
 	local e2 = net.ReadEntity()
 	HBeamTable[e2] = {}
-end
+end)
 
 hook.Add("PreDrawTranslucentRenderables","HobBeamHook",function()
         local E2Count = 0

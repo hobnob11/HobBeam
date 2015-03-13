@@ -126,7 +126,12 @@ end
 --	net.Broadcast()
 --end
 	
-		
+
+registerCallback("destruct",function(self)
+	net.start("HobKillMsg")
+	net.WriteEntity(self.entity)
+	net.Broadcast()
+end)
 
 registerCallback("postexecute",function(self)
 	if(self.data.Pending) then 
@@ -142,8 +147,3 @@ self.data.Queue = {} --the table of all the things to be sent
 self.data.Pending = false -- Set to true whenever new information is added to the table queue
 end)
 
-registerCallback("destruct",function(self)
-	net.start("HobKillMsg")
-	net.WriteEntity(self.entity)
-	net.Broadcast()
-end
