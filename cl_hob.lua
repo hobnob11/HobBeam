@@ -9,20 +9,33 @@ local HBeamTable = {}
 --now I need to somehow "hook" myself onto my own net message 
 
 --it would be far to easy if copying this over worked
-local void function PushToCST(Changes)
-	--loop for every change table 
-	for I = 0 , #Changes do
-		--make sure the beam being changed is valid
-		if not Changes[I]["ownerE2"]==nil or Changes[I]["index"]==nil then
-			--i have checked to make sure it is a valid beam, now i just have to put the new information in the global tabl
-			for Key,Value in pairs(Changes[I]) do
-		-- Global Table   e2SpecificTable    IndexedBeamTable  Var  
-				HBeamTable[self.entity()][Changes[I]["index"]][Key] =Changes[I][Key]
+local void function PushToCST(Changes,e2)
+	if Changes ~= nil then
+
+		-- Make sure the e2 is in the gTable
+		if HBeamTable[e2] == nil then HBeamTable[e2] = {} end
+
+		-- Loop through the change tables
+		for I = 0 , #Changes do
+			-- Make sure it's not an empty table
+			if Changes[I] ~= nil then
+				-- Check that the E2 and index exist.
+				if Changes[I]["ownerE2"]~=nil or Changes[I]["index"]~=nil then
+					-- Grab the index, for use
+					local index = Changes[I]["index"]
+					-- Make sure the index is within the e2 in the gTable
+					if HBeamTable[e2][index] == nil then HBeamTable[e2][index] = {} end
+
+					-- Loop through the change table to add 
+					for Key,Value in pairs(Changes[I]) do  
+						-- Add it.
+						HBeamTable[e2][index][Key] = Value
+					end
+				end
 			end
 		end
 	end
 end
-
 net.Receive("HobNetMsg", function(len) 
 	local Queue = {}
 	Queue = net.ReadTable()

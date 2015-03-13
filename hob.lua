@@ -52,7 +52,7 @@ end
 e2function void createHBeam(index, vector startPos, vector endPos, width, string material, textureScale, vector4 color)
 	--queue the information for the client somehow
 	local Table2 = {}
-	Table2["ownerE2"]=self.entity()
+	Table2["ownerE2"]=self.entity
 	Table2["index"]=index
 	Table2["ENUM"]=0
 	Table2["startPos"]=Vector(startPos[1],startPos[2],startPos[3])
@@ -68,7 +68,7 @@ end
 
 e2function void setHBeamPos(index, vector startPos, vector endPos)
 	local Table2 = {}
-	Table2["ownerE2"]=self.entity()
+	Table2["ownerE2"]=self.entity
 	Table2["index"]=index
 	Table2["ENUM"]=1
 	Table2["startPos"]=Vector(startPos[1],startPos[2],startPos[3])
