@@ -39,9 +39,11 @@ end
 net.Receive("HobNetMsg", function(len) 
 	local Queue = {}
 	local QueueLength = net.ReadUInt(10)
+	local e2 = nil 
 	for i=1,QueueLength do
 		local ENUM = net.ReadUInt(2)
-		Queue["ownerE2"] = net.ReadEntity()
+		e2 = net.ReadEntity()
+		Queue[i]["ownerE2"] = e2
 		if ENUM == 0 then 
 			--CreateBeam - ALL THE THINGS
 			Queue[i]["index"] = net.ReadUInt(8)
@@ -57,9 +59,7 @@ net.Receive("HobNetMsg", function(len)
 			Queue[i]["endPos"] = net.ReadVector()
 		end
 	end
-	--PushToCST(Queue,?
-	
-	--TODO: REWRITE HANDELING OF DATA
+	PushToCST(Queue,e2)
 end)
 
 hook.Add("PreDrawTranslucentRenderables","HobBeamHook",function()
