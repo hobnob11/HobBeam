@@ -41,10 +41,9 @@ net.Receive("HobNetMsg", function(len)
 	local QueueLength = net.ReadUInt(10)
 	local e2 = nil 
 	for i=1,QueueLength do
-		local Queue = {}
+		Queue[i] = {}
 		local ENUM = net.ReadUInt(2)
 		e2 = net.ReadEntity()
-		print("PRINT THE E2 ENTITY AAAAAAH",e2)
 		Queue[i]["ownerE2"] = e2
 		
 		if ENUM == 0 then 
@@ -64,19 +63,29 @@ net.Receive("HobNetMsg", function(len)
 	end
 	PushToCST(Queue,e2)
 end)
+net.Receive("HobKillMsg", function(len)
+	local e2 = net.ReadEntity()
+	HBeamTable[e2] = {}
+end
 
 hook.Add("PreDrawTranslucentRenderables","HobBeamHook",function()
-	if #HBeamTable>0 then
-		for I = 1 , #HBeamTable do
-			local Vec1 = HBeamTable[I]["startPos"]
-			local Vec2 = HBeamTable[I]["endPos"]
-			local Num1 = HBeamTable[I]["width"]
-			local Str1 = HBeamTable[I]["material"]
-			local Num2 = HBeamTable[I]["textureScale"]
-			local Col1 = HBeamTable[I]["color"]
-			local Beam = Material( Str1 )	
-			render.SetMaterial( Beam )
-			render.DrawBeam( Vec1 , Vec2 , Num1, Num2, Num2, Col1 )
-		end
-	end
+        local E2Count = 0
+        for k,v in pairs(HBeamTable) do E2Count = E2Count +1 end
+        if E2Count > 0 then
+                for k,E2 in pairs(HBeamTable) do
+                        if #E2>0 then
+                                for I = 1 , #E2 do
+                                        local Vec1 = E2[I]["startPos"]
+                                        local Vec2 = E2[I]["endPos"]
+                                        local Num1 = E2[I]["width"]
+                                        local Str1 = E2[I]["material"]
+                                        local Num2 = E2[I]["textureScale"]
+                                        local Col1 = E2[I]["color"]
+                                        local Beam = Material( Str1 )  
+                                        render.SetMaterial( Beam )
+                                        render.DrawBeam( Vec1 , Vec2 , Num1, Num2, Num2, Col1 )
+                                end
+                        end
+                end
+        end
 end)

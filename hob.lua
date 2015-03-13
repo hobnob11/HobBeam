@@ -1,5 +1,6 @@
 E2Lib.RegisterExtension("hob",true) -- makes the extension, true to load by defualt
 util.AddNetworkString("HobNetMsg")
+utl.AddNetworkString("HobKillMsg")
 --Putting this here should make a global table to store all beams on the server?
 local HBeamTable = {}
 
@@ -18,7 +19,7 @@ util.AddNetworkString("HobNetMsg")
 --    |    ["index"]=4   |    ["index"]=4    |    ["index"]=4    | string of the name of the arg as the key. 
 
 
-print("HOB SERVERSIDE INIT")
+
 --push to ServerSideTable
 
 local void function PushToSST(Changes,e2)
@@ -93,7 +94,6 @@ end
 local function NetMessage(self)
 	net.Start("HobNetMsg")
 	local Queue = self.data.Queue
-	PrintTable(Queue)
 	local QueueLength = #self.data.Queue
 	net.WriteUInt(QueueLength,10)
 	for i=1,QueueLength do
@@ -141,3 +141,9 @@ registerCallback("construct",function(self)
 self.data.Queue = {} --the table of all the things to be sent
 self.data.Pending = false -- Set to true whenever new information is added to the table queue
 end)
+
+registerCallback("destruct",function(self)
+	net.start("HobKillMsg")
+	net.WriteEntity(self.entity)
+	net.Broadcast()
+end
