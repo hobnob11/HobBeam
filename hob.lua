@@ -7,14 +7,14 @@ local HBeamTable = {}
 -- i could have a grave mis-understanding of how net messages work...
 util.AddNetworkString("HobNetMsg")
 
-
+print("HOB SERVERSIDE INIT")
 --push to ServerSideTable
 
 local void function PushToSST(Changes)
 	--loop for every change table 
 	for I = 0 , #Changes do
 		--make sure the beam being changed is valid
-		if not Changes[I]["ownerE2"]==nil or Changes[I]["index"]==nil then
+		if Changes[I]["ownerE2"]~=nil or Changes[I]["index"]~=nil then
 			--i have checked to make sure it is a valid beam, now i just have to put the new information in the global tabl
 			for Key,Value in pairs(Changes[I]) do
 		-- Global Table   e2SpecificTable    IndexedBeamTable  Var  
@@ -29,6 +29,7 @@ e2function void createHBeam(index, vector startPos, vector endPos, width, string
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity()
 	Table2["index"]=index
+	Table2["ENUM"]=0
 	Table2["startPos"]=Vector(startPos[1],startPos[2],startPos[3])
 	Table2["endPos"]=Vector(endPos[1],endPos[2],endPos[3])
 	Table2["width"]=width
@@ -44,6 +45,7 @@ e2function void setHBeamPos(index, vector startPos, vector endPos)
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity()
 	Table2["index"]=index
+	Table2["ENUM"]=1
 	Table2["startPos"]=Vector(startPos[1],startPos[2],startPos[3])
 	Table2["endPos"] = Vector(endPos[1],endPos[2],endPos[3])
 	self.data.Queue[#self.data.Queue+1]=Table2
@@ -62,29 +64,31 @@ end
 --
 -- Gets the queue of information to be sent to the client, puts it in HobNetMsg and sends it
 --
-
--- The datatypes array needs to be updated if datatypes change, or are added/removed.
-local dataTypes = {
-	index = "number",
-	startpos = "vector",
-	endpos = "vector",
-	width = "number",
-	material = "string",
-	texturescale = "number",
-	color = "vector"
-}
--- This will loop through and write the NAME (e.g: startpos) of what's being updated, 
--- then what's actually being updated (e.g: vec(1,2,3))
+--divran magic go!
 local function NetMessage(self)
 	net.Start("HobNetMsg")
-		for k,v in pairs(self.data.Queue) do
-			-- net.WriteTable(self.data.Queue)
-			net.WriteString(k)
-
-			if datatypes[k] == "number" then net.WriteNumber(v) end
-			elseif datatypes[k] == "vector" then net.WriteVector(v) end
-			elseif datatypes[k] == "string" then net.WriteString(v) end
+	local Queue = self.data.Queue
+	for i=1,#Queue do
+		local ENUM = Queue[i]["ENUM"]
+		if ENUM == 0 then 
+			--CreateBeam - ALL THE THINGS
+			net.WriteUInit(ENUM,2)
+			net.WriteEntity(Queue[I]["ownerE2"])
+			net.WriteUInit(math.Clamp(Queue[I]["index"],0,255),8)
+			net.WriteVector(Queue[I]["startPos"])
+			net.WriteVector(Queue[I]["endPos"])
+			net.WriteUInt(math.Clamp(Queue[I]["width"],0,1023),10)
+			net.WriteString(Queue[I]["material"])
+			net.WriteUInt(math.Clamp(Queue[I]["textureScale"],0,8),3)
+			net.WriteColor(Queue[I]["color"])
+		elseif ENUM == 1 then
+			net.WriteUInit(ENUM,2)
+			net.WriteEntity(Queue[I]["ownerE2"])
+			net.WriteUInit(math.Clamp(Queue[I]["index"],0,255),8)
+			net.WriteVector(Queue[I]["startPos"])
+			net.WriteVector(Queue[I]["endPos"])
 		end
+	end
 	net.Broadcast()
 end
 
