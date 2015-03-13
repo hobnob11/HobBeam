@@ -65,27 +65,25 @@ net.Receive("HobNetMsg", function(len)
 end)
 net.Receive("HobKillMsg", function(len)
 	local e2 = net.ReadEntity()
-	HBeamTable[e2] = {}
+	if(e2~=nil) then
+		HBeamTable[e2] = nil
+	end
 end)
 
 hook.Add("PreDrawTranslucentRenderables","HobBeamHook",function()
-        local E2Count = 0
-        for k,v in pairs(HBeamTable) do E2Count = E2Count +1 end
-        if E2Count > 0 then
-                for k,E2 in pairs(HBeamTable) do
-                        if #E2>0 then
-                                for I = 1 , #E2 do
-                                        local Vec1 = E2[I]["startPos"]
-                                        local Vec2 = E2[I]["endPos"]
-                                        local Num1 = E2[I]["width"]
-                                        local Str1 = E2[I]["material"]
-                                        local Num2 = E2[I]["textureScale"]
-                                        local Col1 = E2[I]["color"]
-                                        local Beam = Material( Str1 )  
-                                        render.SetMaterial( Beam )
-                                        render.DrawBeam( Vec1 , Vec2 , Num1, Num2, Num2, Col1 )
-                                end
-                        end
-                end
-        end
+		for k,E2 in pairs(HBeamTable) do
+				if #E2>0 then
+						for I = 1 , #E2 do
+								local Vec1 = E2[I]["startPos"]
+								local Vec2 = E2[I]["endPos"]
+								local Num1 = E2[I]["width"]
+								local Str1 = E2[I]["material"]
+								local Num2 = E2[I]["textureScale"]
+								local Col1 = E2[I]["color"]
+								local Beam = Material( Str1 )  
+								render.SetMaterial( Beam )
+								render.DrawBeam( Vec1 , Vec2 , Num1, Num2, Num2, Col1 )
+						end
+				end
+		end
 end)

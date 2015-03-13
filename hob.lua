@@ -1,12 +1,12 @@
 E2Lib.RegisterExtension("hob",true) -- makes the extension, true to load by defualt
 util.AddNetworkString("HobNetMsg")
-utl.AddNetworkString("HobKillMsg")
+--utl.AddNetworkString("HobKillMsg")
 --Putting this here should make a global table to store all beams on the server?
 local HBeamTable = {}
 
 -- i assume that both this code is actually ran and also that it only needs to be run once
 -- i could have a grave mis-understanding of how net messages work...
-util.AddNetworkString("HobNetMsg")
+util.AddNetworkString("HobKillMsg")
 
 --    |----------------------------------------------------------| -this table is confusing as shit so here goes
 --    |                       HBeamTable{}                       | This table is global to all e2's for everyone on the server
@@ -120,15 +120,8 @@ local function NetMessage(self)
 	net.Broadcast()
 end
 
---local function NetMessage(self)
---	net.Start("HobNetMsg")
---	net.WriteTable(self.data.Queue)
---	net.Broadcast()
---end
-	
-
 registerCallback("destruct",function(self)
-	net.start("HobKillMsg")
+	net.Start("HobKillMsg")
 	net.WriteEntity(self.entity)
 	net.Broadcast()
 end)
