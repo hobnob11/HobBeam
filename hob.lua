@@ -1,7 +1,11 @@
 E2Lib.RegisterExtension("hob",true) -- makes the extension, true to load by defualt
 util.AddNetworkString("HobNetMsg")
-local HBeamTable = {}
 --Putting this here should make a global table to store all beams on the server?
+local HBeamTable = {}
+
+-- i assume that both this code is actually ran and also that it only needs to be run once
+-- i could have a grave mis-understanding of how net messages work...
+util.AddNetworkString("HobNetMsg")
 
 
 --push to ServerSideTable
@@ -52,13 +56,8 @@ end
 --------------------------------------------------------
 --Creates a net message and then sends it
 
-<<<<<<< HEAD
 --gets the queue of information to be sent to the client, puts it in HobNetMsg and sends it
 --probably...
-=======
--- i assume that both this code is actually ran and also that it only needs to be run once
--- i could have a grave mis-understanding of how net messages work...
-util.AddNetworkString("HobNetMsg")
 
 --
 -- Gets the queue of information to be sent to the client, puts it in HobNetMsg and sends it
@@ -76,7 +75,6 @@ local dataTypes = {
 }
 -- This will loop through and write the NAME (e.g: startpos) of what's being updated, 
 -- then what's actually being updated (e.g: vec(1,2,3))
->>>>>>> 0820e2fb0a80593dde4c18c3c6198a4f2698578b
 local function NetMessage(self)
 	net.Start("HobNetMsg")
 		for k,v in pairs(self.data.Queue) do
