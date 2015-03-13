@@ -41,9 +41,12 @@ net.Receive("HobNetMsg", function(len)
 	local QueueLength = net.ReadUInt(10)
 	local e2 = nil 
 	for i=1,QueueLength do
+		local Queue = {}
 		local ENUM = net.ReadUInt(2)
 		e2 = net.ReadEntity()
+		print("PRINT THE E2 ENTITY AAAAAAH",e2)
 		Queue[i]["ownerE2"] = e2
+		
 		if ENUM == 0 then 
 			--CreateBeam - ALL THE THINGS
 			Queue[i]["index"] = net.ReadUInt(8)
