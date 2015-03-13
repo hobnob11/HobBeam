@@ -7,14 +7,26 @@ E2Helper.Descriptions["setHBeamPos(nvv)"] = "Sets the position of the Hob Beam! 
 local HBeamTable = {}
 --now I need to somehow "hook" myself onto my own net message 
 
+--it would be far to easy if copying this over worked
+local void function PushToSST(Changes)
+	--loop for every change table 
+	for I = 0 , #Changes do
+		--make sure the beam being changed is valid
+		if not Changes[I]["ownerE2"]==nil or Changes[I]["index"]==nil then
+			--i have checked to make sure it is a valid beam, now i just have to put the new information in the global tabl
+			for Key,Value in pairs(Changes[I]) do
+		-- Global Table   e2SpecificTable    IndexedBeamTable  Var  
+				HBeamTable[self.entity()][Changes[I]["index"]][Key] =Changes[I][Key]
+			end
+		end
+	end
+end
+
 net.Receive("HobNetMsg", function(len) 
 	local Queue = {}
 	Queue = net.ReadTable()
-	for I = 1 , #Queue do 
-		local index = Queue[I]["index"]
-		for Key , Value in pairs(Queue[I]) do
-			HBeamTable[index][Key] = Value
-		end
+	--TODO: REWRITE HANDELING OF DATA
+	PushToSST(Queue)
 	end
 end)
 

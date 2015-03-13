@@ -1,7 +1,8 @@
 E2Lib.RegisterExtension("hob",true) -- makes the extension, true to load by defualt
-
---Putting this here should make a global table to store all beams on the server?
+util.AddNetworkString("HobNetMsg")
 local HBeamTable = {}
+--Putting this here should make a global table to store all beams on the server?
+
 
 --push to ServerSideTable
 
@@ -32,6 +33,7 @@ e2function void createHBeam(index, vector startPos, vector endPos, width, string
 	Table2["color"]=Color(color[1],color[2],color[3],color[4])
 	self.data.Queue[#self.data.Queue+1]=Table2
 	self.data.Pending = true
+	
 end
 
 e2function void setHBeamPos(index, vector startPos, vector endPos)
@@ -50,10 +52,6 @@ end
 --------------------------------------------------------
 --Creates a net message and then sends it
 
--- i assume that both this code is actually ran and also that it only needs to be run once
--- i could have a grave mis-understanding of how net messages work...
-util.AddNetworkString("HobNetMsg")
-
 --gets the queue of information to be sent to the client, puts it in HobNetMsg and sends it
 --probably...
 local function NetMessage(self)
@@ -66,8 +64,7 @@ end
 
 registerCallback("postexecute",function(self)
 	if(self.data.Pending) then 
-	
-	
+		PushToSST(self.data.Queue)
 		NetMessage(self)
 		self.data.Pending = false
 		self.data.Queue = {}
