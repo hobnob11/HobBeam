@@ -28,18 +28,18 @@ local void function PushToSST(Changes,e2)
 		if HBeamTable[e2] == nil then HBeamTable[e2] = {} end
 
 		-- Loop through the change tables
-		for I = 0 , #Changes do
+		for i = 0 , #Changes do
 			-- Make sure it's not an empty table
-			if Changes[I] ~= nil then
+			if Changes[i] ~= nil then
 				-- Check that the E2 and index exist.
-				if Changes[I]["ownerE2"]~=nil or Changes[I]["index"]~=nil then
+				if Changes[i]["ownerE2"]~=nil or Changes[i]["index"]~=nil then
 					-- Grab the index, for use
-					local index = Changes[I]["index"]
+					local index = Changes[i]["index"]
 					-- Make sure the index is within the e2 in the gTable
 					if HBeamTable[e2][index] == nil then HBeamTable[e2][index] = {} end
 
 					-- Loop through the change table to add 
-					for Key,Value in pairs(Changes[I]) do  
+					for Key,Value in pairs(Changes[i]) do  
 						-- Add it.
 						HBeamTable[e2][index][Key] = Value
 					end
@@ -93,6 +93,7 @@ end
 local function NetMessage(self)
 	net.Start("HobNetMsg")
 	local Queue = self.data.Queue
+	PrintTable(Queue)
 	local QueueLength = #self.data.Queue
 	net.WriteUInt(QueueLength,10)
 	for i=1,QueueLength do
@@ -100,20 +101,20 @@ local function NetMessage(self)
 		if ENUM == 0 then 
 			--CreateBeam - ALL THE THINGS
 			net.WriteUInt(ENUM,2)
-			net.WriteEntity(Queue[I]["ownerE2"])
-			net.WriteUInt(math.Clamp(Queue[I]["index"],0,255),8)
-			net.WriteVector(Queue[I]["startPos"])
-			net.WriteVector(Queue[I]["endPos"])
-			net.WriteUInt(math.Clamp(Queue[I]["width"],0,1023),10)
-			net.WriteString(Queue[I]["material"])
-			net.WriteUInt(math.Clamp(Queue[I]["textureScale"],0,8),3)
-			net.WriteColor(Queue[I]["color"])
+			net.WriteEntity(self.entity)
+			net.WriteUInt(math.Clamp(Queue[i]["index"],0,255),8)
+			net.WriteVector(Queue[i]["startPos"])
+			net.WriteVector(Queue[i]["endPos"])
+			net.WriteUInt(math.Clamp(Queue[i]["width"],0,1023),10)
+			net.WriteString(Queue[i]["material"])
+			net.WriteUInt(math.Clamp(Queue[i]["textureScale"],0,8),3)
+			net.WriteColor(Queue[i]["color"])
 		elseif ENUM == 1 then
 			net.WriteUInt(ENUM,2)
-			net.WriteEntity(Queue[I]["ownerE2"])
-			net.WriteUInt(math.Clamp(Queue[I]["index"],0,255),8)
-			net.WriteVector(Queue[I]["startPos"])
-			net.WriteVector(Queue[I]["endPos"])
+			net.WriteEntity(Queue[i]["ownerE2"])
+			net.WriteUInt(math.Clamp(Queue[i]["index"],0,255),8)
+			net.WriteVector(Queue[i]["startPos"])
+			net.WriteVector(Queue[i]["endPos"])
 		end
 	end
 	net.Broadcast()

@@ -38,9 +38,28 @@ local void function PushToCST(Changes,e2)
 end
 net.Receive("HobNetMsg", function(len) 
 	local Queue = {}
-	Queue = net.ReadTable()
+	local QueueLength = net.ReadUInt(10)
+	for i=1,QueueLength do
+		local ENUM = net.ReadUInt(2)
+		Queue["ownerE2"] = net.ReadEntity()
+		if ENUM == 0 then 
+			--CreateBeam - ALL THE THINGS
+			Queue[i]["index"] = net.ReadUInt(8)
+			Queue[i]["startPos"] = net.ReadVector()
+			Queue[i]["endPos"] = net.ReadVector()
+			Queue[i]["width"] = net.ReadUInt(10)
+			Queue[i]["material"] = net.ReadString()
+			Queue[i]["textureScale"] = net.ReadUInt(3)
+			Queue[i]["color"] = net.ReadColor()
+		elseif ENUM == 1 then
+			Queue[i]["index"] = net.ReadUInt(8)
+			Queue[i]["startPos"] = net.ReadVector()
+			Queue[i]["endPos"] = net.ReadVector()
+		end
+	end
+	--PushToCST(Queue,?
+	
 	--TODO: REWRITE HANDELING OF DATA
-	PushToCST(Queue)
 end)
 
 hook.Add("PreDrawTranslucentRenderables","HobBeamHook",function()
