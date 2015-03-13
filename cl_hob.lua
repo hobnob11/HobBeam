@@ -1,4 +1,9 @@
---E2Helper.Descriptions["drawHBeam(vvnsnxv4)"] = "Creates a beam using the drawBeam function, made by hobnob :D"
+--adds entries to the helper
+--createHBeam(index, vector startPos, vector endPos, width, string material, textureScale, vector4 color)
+E2Helper.Descriptions["createHBeam(nvvnsnxv4)"] = "Creates a beam using the drawBeam function, made by hobnob :D"
+--setHBeamPos(index, vector startPos, vector endPos)
+E2Helper.Descriptions["setHBeamPos(nvv)"] = "Sets the position of the Hob Beam! "
+
 local HBeamTable = {}
 --now I need to somehow "hook" myself onto my own net message 
 
@@ -13,7 +18,8 @@ net.Receive("HobNetMsg", function(len)
 			HBeamTable[index]["width"] = Queue[I]["width"]
 			HBeamTable[index]["material"] = Queue[I]["material"]
 			HBeamTable[index]["textureScale"] = Queue[I]["textureScale"]
-			HBeamTable[index]["color"] = Queue[I]["color"]		
+			HBeamTable[index]["color"] = Queue[I]["color"]
+		end
 	end
 end)
 
