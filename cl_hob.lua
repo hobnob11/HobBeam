@@ -9,11 +9,11 @@ local HBeamTable = {}
 --now I need to somehow "hook" myself onto my own net message 
 
 --it would be far to easy if copying this over worked
-local void function PushToCST(Changes,e2)
+local void function PushToCST(Changes,e2id)
 	if Changes ~= nil then
 
 		-- Make sure the e2 is in the gTable
-		if HBeamTable[e2] == nil then HBeamTable[e2] = {} end
+		if HBeamTable[e2id] == nil then HBeamTable[e2id] = {} end
 
 		-- Loop through the change tables
 		for I = 0 , #Changes do
@@ -24,12 +24,12 @@ local void function PushToCST(Changes,e2)
 					-- Grab the index, for use
 					local index = Changes[I]["index"]
 					-- Make sure the index is within the e2 in the gTable
-					if HBeamTable[e2][index] == nil then HBeamTable[e2][index] = {} end
+					if HBeamTable[e2id][index] == nil then HBeamTable[e2id][index] = {} end
 
 					-- Loop through the change table to add 
 					for Key,Value in pairs(Changes[I]) do  
 						-- Add it.
-						HBeamTable[e2][index][Key] = Value
+						HBeamTable[e2id][index][Key] = Value
 					end
 				end
 			end
@@ -39,12 +39,12 @@ end
 net.Receive("HobNetMsg", function(len) 
 	local Queue = {}
 	local QueueLength = net.ReadUInt(10)
-	local e2 = nil 
+	local e2id = nil 
 	for i=1,QueueLength do
 		Queue[i] = {}
 		local ENUM = net.ReadUInt(2)
-		e2 = net.ReadEntity()
-		Queue[i]["ownerE2"] = e2
+		e2id = net.ReadUInt(16)
+		Queue[i]["ownerE2"] = e2id
 		
 		if ENUM == 0 then 
 			--CreateBeam - ALL THE THINGS
@@ -61,12 +61,13 @@ net.Receive("HobNetMsg", function(len)
 			Queue[i]["endPos"] = net.ReadVector()
 		end
 	end
-	PushToCST(Queue,e2)
+	PushToCST(Queue,e2id)
 end)
 net.Receive("HobKillMsg", function(len)
-	local e2 = net.ReadEntity()
-	if(e2~=nil) then
-		HBeamTable[e2] = nil
+	local e2id = net.ReadUInt(16)
+	print(e2id)
+	if(e2id~=nil) then
+		HBeamTable[e2id] = nil
 	end
 end)
 
