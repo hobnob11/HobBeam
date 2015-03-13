@@ -72,9 +72,9 @@ local function NetMessage(self)
 		local ENUM = Queue[i]["ENUM"]
 		if ENUM == 0 then 
 			--CreateBeam - ALL THE THINGS
-			net.WriteUInit(ENUM,2)
+			net.WriteUInt(ENUM,2)
 			net.WriteEntity(Queue[I]["ownerE2"])
-			net.WriteUInit(math.Clamp(Queue[I]["index"],0,255),8)
+			net.WriteUInt(math.Clamp(Queue[I]["index"],0,255),8)
 			net.WriteVector(Queue[I]["startPos"])
 			net.WriteVector(Queue[I]["endPos"])
 			net.WriteUInt(math.Clamp(Queue[I]["width"],0,1023),10)
@@ -82,9 +82,9 @@ local function NetMessage(self)
 			net.WriteUInt(math.Clamp(Queue[I]["textureScale"],0,8),3)
 			net.WriteColor(Queue[I]["color"])
 		elseif ENUM == 1 then
-			net.WriteUInit(ENUM,2)
+			net.WriteUInt(ENUM,2)
 			net.WriteEntity(Queue[I]["ownerE2"])
-			net.WriteUInit(math.Clamp(Queue[I]["index"],0,255),8)
+			net.WriteUInt(math.Clamp(Queue[I]["index"],0,255),8)
 			net.WriteVector(Queue[I]["startPos"])
 			net.WriteVector(Queue[I]["endPos"])
 		end
