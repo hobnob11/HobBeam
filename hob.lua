@@ -1,16 +1,28 @@
-E2Lib.RegisterExtension("hob",true) -- makes the extension, false means its not a default wiremod extension
+E2Lib.RegisterExtension("hob",true) -- makes the extension, true to load by defualt
 
-e2function void drawHBeam(vector startPos, vector endPos, width, string material, textureScale, vector4 color)
+--since it gets pretty intensive on the ops front if you run this every tick, im going to try make it work more like holo's
+
+e2function void createHBeam(index, vector startPos, vector endPos, width, string material, textureScale, vector4 color)
 	--queue the information for the client somehow
 	local Table2 = {}
+	Table2["index"]=index
 	Table2["startPos"]=Vector(startPos[1],startPos[2],startPos[3])
 	Table2["endPos"]=Vector(endPos[1],endPos[2],endPos[3])
 	Table2["width"]=width
 	Table2["material"]=material
 	Table2["textureScale"]=textureScale
 	Table2["color"]=Color(color[1],color[2],color[3],color[4])
-	self.data.HobTable[#self.data.HobTable+1]=Table2
+	self.data.Queue[#self.data.Queue+1]=Table2
 	self.data.Pending = true
+end
+
+e2function void setHBeamPos(index, vector startPos, vector endPos)
+	local Table2 = {}
+	Table2["index"]=index
+	Table2["startPos"]=Vector(startPos[1],startPos[2],startPos[3])
+	Table2["endPos"] = Vector(endPos[1],endPos[2],endPos[3])
+	self.data.Queue[#self.data.Queue+1]=Table2
+	self.data.Pending = true 
 end
 
 
@@ -27,7 +39,7 @@ util.AddNetworkString("HobNetMsg")
 --probably...
 local function NetMessage(self)
 	net.Start("HobNetMsg")
-	net.WriteTable(self.data.HobTable)
+	net.WriteTable(self.data.Queue)
 	net.Broadcast()
 end
 
@@ -35,11 +47,11 @@ registerCallback("postexecute",function(self)
 	if(self.data.Pending) then 
 		NetMessage(self)
 		self.data.Pending = false
-		self.data.HobTable = {}
+		self.data.Queue = {}
 	end
 end)
 
 registerCallback("construct",function(self)
-self.data.HobTable = {} --the table of all the things to be sent
+self.data.Queue = {} --the table of all the things to be sent
 self.data.Pending = false -- Set to true whenever new information is added to the table queue
 end)
