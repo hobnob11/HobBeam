@@ -4,6 +4,7 @@ E2Helper.Descriptions["createHBeam(nvvnsnxv4)"] = "Creates a beam using the draw
 --setHBeamPos(index, vector startPos, vector endPos)
 E2Helper.Descriptions["setHBeamPos(nvv)"] = "Sets the position of the Hob Beam! "
 
+print("HOB CLIENTSIDE INIT")
 local HBeamTable = {}
 --now I need to somehow "hook" myself onto my own net message 
 
@@ -27,7 +28,6 @@ net.Receive("HobNetMsg", function(len)
 	Queue = net.ReadTable()
 	--TODO: REWRITE HANDELING OF DATA
 	PushToSST(Queue)
-	end
 end)
 
 hook.Add("PreDrawTranslucentRenderables","HobBeamHook",function()
