@@ -67,7 +67,7 @@ net.Receive("HobNetMsg", function(len)
 	PushToCST(Queue,e2id)
 end)
 net.Receive("HobKillMsg", function(len)
-	local killAll = net.ReadBool()
+	local KillAll = net.ReadBool()
 	local e2id
 	local index 
 	if KillAll then 
