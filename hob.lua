@@ -77,6 +77,17 @@ e2function void setHBeamPos(index, vector startPos, vector endPos)
 	self.data.Queue[#self.data.Queue+1]=Table2
 	self.data.Pending = true 
 end
+__e2setcost(5)
+e2function void setHBeamColor(index, vector4 color)
+	local Table2 = {}
+	Table2["ownerE2"]=self.entity:EntIndex()
+	Table2["index"]=index
+	Table2["ENUM"]=2
+	Table2["color"]=Color(color[1],color[2],color[3],color[4])
+	self.data.Queue[#self.data.Queue+1]=Table2
+	self.data.Pending = true
+end
+	
 __e2setcost(2)
 e2function void killHBeam(index)
 	local e2id = self.entity:EntIndex()
@@ -118,11 +129,18 @@ local function NetMessage(self)
 			net.WriteUInt(math.Clamp(Queue[i]["textureScale"],0,8),3)
 			net.WriteColor(Queue[i]["color"])
 		elseif ENUM == 1 then
+		--setBeamPos 
 			net.WriteUInt(ENUM,2)
 			net.WriteUInt(self.entity:EntIndex(),16)
 			net.WriteUInt(math.Clamp(Queue[i]["index"],0,255),8)
 			net.WriteVector(Queue[i]["startPos"])
 			net.WriteVector(Queue[i]["endPos"])
+		elseif ENUM == 2 then 
+		--setBeamColor
+			net.WriteUInt(ENUM,2)
+			net.WriteUInt(self.entity:EntIndex(),16)
+			net.WriteUInt(math.Clamp(Queue[i]["index"],0,255),8)
+			net.WriteColor(Queue[i]["color"])
 		end
 	end
 	net.Broadcast()

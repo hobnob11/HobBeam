@@ -5,7 +5,8 @@ E2Helper.Descriptions["createHBeam(nvvnsnxv4)"] = "Creates a beam using the draw
 E2Helper.Descriptions["setHBeamPos(nvv)"] = "Sets the position of the Hob Beam! "
 --e2function void killHBeam(index)
 E2Helper.Descriptions["killHBeam(n)"] = "Kills the beam with given index"
-
+--e2function void setHBeamColor(index, vector4 color)
+E2Helper.Descriptions["setHBeamColor(nxv4)"] = "Sets the colour of the beam with given index"
 
 print("HOB CLIENTSIDE INIT")
 local HBeamTable = {}
@@ -59,9 +60,13 @@ net.Receive("HobNetMsg", function(len)
 			Queue[i]["textureScale"] = net.ReadUInt(3)
 			Queue[i]["color"] = net.ReadColor()
 		elseif ENUM == 1 then
+			--SetBeamPos
 			Queue[i]["index"] = net.ReadUInt(8)
 			Queue[i]["startPos"] = net.ReadVector()
 			Queue[i]["endPos"] = net.ReadVector()
+		elseif ENUM == 2 then
+			Queue[i]["index"] = net.ReadUInt(8)
+			Queue[i]["color"] = net.ReadColor()
 		end
 	end
 	PushToCST(Queue,e2id)
