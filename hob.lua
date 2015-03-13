@@ -1,10 +1,25 @@
 E2Lib.RegisterExtension("hob",true) -- makes the extension, true to load by defualt
 
---since it gets pretty intensive on the ops front if you run this every tick, im going to try make it work more like holo's
+--Putting this here should make a global table to store all beams on the server?
+local HBeamTable = {}
+
+--push to ServerSideTable
+
+local void function PushToSST(Changes)
+	--loop for every change table 
+	for I = 0 , #Changes do
+		--make sure the beam being changed is valid
+		if not Changes[I]["ownerE2"]==nil or Changes[I]["index"]==nil then
+			--i have checked to make sure it is a valid beam, now i just have to put the new information in the global table somehow
+			-- i have no idea how ....
+		end
+	end
+end
 
 e2function void createHBeam(index, vector startPos, vector endPos, width, string material, textureScale, vector4 color)
 	--queue the information for the client somehow
 	local Table2 = {}
+	Table2["ownerE2"]=self.entity()
 	Table2["index"]=index
 	Table2["startPos"]=Vector(startPos[1],startPos[2],startPos[3])
 	Table2["endPos"]=Vector(endPos[1],endPos[2],endPos[3])
@@ -18,6 +33,7 @@ end
 
 e2function void setHBeamPos(index, vector startPos, vector endPos)
 	local Table2 = {}
+	Table2["ownerE2"]=self.entity()
 	Table2["index"]=index
 	Table2["startPos"]=Vector(startPos[1],startPos[2],startPos[3])
 	Table2["endPos"] = Vector(endPos[1],endPos[2],endPos[3])
@@ -42,9 +58,13 @@ local function NetMessage(self)
 	net.WriteTable(self.data.Queue)
 	net.Broadcast()
 end
+	
+		
 
 registerCallback("postexecute",function(self)
 	if(self.data.Pending) then 
+	
+	
 		NetMessage(self)
 		self.data.Pending = false
 		self.data.Queue = {}
