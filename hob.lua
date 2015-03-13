@@ -10,8 +10,11 @@ local void function PushToSST(Changes)
 	for I = 0 , #Changes do
 		--make sure the beam being changed is valid
 		if not Changes[I]["ownerE2"]==nil or Changes[I]["index"]==nil then
-			--i have checked to make sure it is a valid beam, now i just have to put the new information in the global table somehow
-			-- i have no idea how ....
+			--i have checked to make sure it is a valid beam, now i just have to put the new information in the global tabl
+			for Key,Value in pairs(Changes[I]) do
+		-- Global Table   e2SpecificTable    IndexedBeamTable  Var  
+				HBeamTable[self.entity()][Changes[I]["index"]][Key] =Changes[I][Key]
+			end
 		end
 	end
 end
