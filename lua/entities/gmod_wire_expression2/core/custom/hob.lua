@@ -126,7 +126,7 @@ local function NetMessage(self)
 			net.WriteVector(Queue[i]["endPos"])
 			net.WriteUInt(math.Clamp(Queue[i]["width"],0,1023),10)
 			net.WriteString(Queue[i]["material"])
-			net.WriteUInt(math.Clamp(Queue[i]["textureScale"],0,8),3)
+			net.WriteDouble(math.Clamp(Queue[i]["textureScale"],0,8),3)
 			net.WriteColor(Queue[i]["color"])
 		elseif ENUM == 1 then
 		--setBeamPos 

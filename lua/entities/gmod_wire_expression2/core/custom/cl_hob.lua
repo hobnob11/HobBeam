@@ -57,7 +57,7 @@ net.Receive("HobNetMsg", function(len)
 			Queue[i]["endPos"] = net.ReadVector()
 			Queue[i]["width"] = net.ReadUInt(10)
 			Queue[i]["material"] = net.ReadString()
-			Queue[i]["textureScale"] = net.ReadUInt(3)
+			Queue[i]["textureScale"] = net.ReadDouble(3)
 			Queue[i]["color"] = net.ReadColor()
 		elseif ENUM == 1 then
 			--SetBeamPos
@@ -95,12 +95,13 @@ hook.Add("PreDrawTranslucentRenderables","HobBeamHook",function()
 								local Str1 = E2[I]["material"]
 								local Num2 = E2[I]["textureScale"]
 								local Col1 = E2[I]["color"]
-								local Beam = Material( Str1 )  
-								local Cent = Beam:Width / 2
+								local Beam = Material( Str1 ) 
+								local Cent = Beam:Width() * 0.5
+								
 								render.SetColorMaterial(Col1)
 								render.SetMaterial( Beam )
 								--TODO: Steal steeveos code and reverse engineer it into here.
-								render.DrawBeam( Vec1 , Vec2 , Num1,Cent-Num2,Cent+Num2, Col1 )
+								render.DrawBeam( Vec1 , Vec2 , Num1, Cent -Num2,Cent+ Num2, Col1 )
 						end
 				end
 		end
