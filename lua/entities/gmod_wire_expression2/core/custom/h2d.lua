@@ -2,27 +2,10 @@ E2Lib.RegisterExtension("H2DBeam",true) -- makes the extension, true to load by 
 util.AddNetworkString("H2DNetMsg")
 util.AddNetworkString("H2DKillMsg")
 print("H2D SERVERSIDE INIT")
---Putting this here should make a global table to store all beams on the server?
+--Global to all e2's table containing all beams 
 local H2DBeamTable = {}
 
--- i assume that both this code is actually ran and also that it only needs to be run once
--- i could have a grave mis-understanding of how net messages work...
-
-
---    |----------------------------------------------------------| -this table is confusing as shit so here goes
---    |                       H2DBeamTable{}                       | This table is global to all e2's for everyone on the server
---    |----------------------------------------------------------| it contains a table of all of the e2's that have created beams
---    |  ["ownerE2"]=1   |   ["ownerE2"]=2   |   ["ownerE2"]=3   |-these tables are stored using the related e2 entity index's as keys 
---    |------------------|-------------------|-------------------| and contain all of the information for the beams that that e2 has created 
---    |    ["index"]=1   |    ["index"]=1    |    ["index"]=1    |
---    |    ["index"]=2   |    ["index"]=2    |    ["index"]=2    | -The individual beams are stored as tables with the beams index as the key.
---    |    ["index"]=3   |    ["index"]=3    |    ["index"]=3    | the individual args (startPos,color etc..) are stored in this table with a 
---    |    ["index"]=4   |    ["index"]=4    |    ["index"]=4    | string of the name of the arg as the key. 
-
-
-
 --push to ServerSideTable
-
 local void function PushToSST(Changes,e2id)
 	if Changes ~= nil then
 
@@ -52,7 +35,7 @@ local void function PushToSST(Changes,e2id)
 end
 __e2setcost(30)
 e2function void createH2DBeam(index, vector startPos, vector endPos, width, string material, textureScale, vector4 color)
-	--queue the information for the client somehow
+	--puts the data in a new entry in the queue
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity:EntIndex()
 	Table2["index"]=index
@@ -69,6 +52,7 @@ e2function void createH2DBeam(index, vector startPos, vector endPos, width, stri
 end
 __e2setcost(10)
 e2function void setH2DBeamPos(index, vector startPos, vector endPos)
+	--puts the data in a new entry in the queue
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity:EntIndex()
 	Table2["index"]=index
@@ -80,6 +64,7 @@ e2function void setH2DBeamPos(index, vector startPos, vector endPos)
 end
 __e2setcost(5)
 e2function void setH2DBeamColor(index, vector4 color)
+	--puts the data in a new entry in the queue
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity:EntIndex()
 	Table2["index"]=index
@@ -91,6 +76,7 @@ end
 	
 __e2setcost(2)
 e2function void killH2DBeam(index)
+	--sends a kill message for the relevant id
 	local e2id = self.entity:EntIndex()
 	net.Start("H2DKillMsg")
 	net.WriteBool(false)
@@ -99,18 +85,10 @@ e2function void killH2DBeam(index)
 	net.Broadcast()
 end
 
---------------------------------------------------------
--- Callbacks
---------------------------------------------------------
---Creates a net message and then sends it
-
---gets the queue of information to be sent to the client, puts it in H2DNetMsg and sends it
---probably...
-
---
--- Gets the queue of information to be sent to the client, puts it in H2DNetMsg and sends it
---
---divran magic go!
+--Uses ENUM : 1 - CreateBeam
+--          : 2 - Set Pos
+--          : 3 - Set Color
+--Sends the change table to all clients
 local function NetMessage(self)
 	net.Start("H2DNetMsg")
 	local Queue = self.data.Queue
@@ -119,7 +97,7 @@ local function NetMessage(self)
 	for i=1,QueueLength do
 		local ENUM = Queue[i]["ENUM"]
 		if ENUM == 0 then 
-			--CreateBeam - ALL THE THINGS
+			--CreateBeam 
 			net.WriteUInt(ENUM,2)
 			net.WriteUInt(self.entity:EntIndex(),16)
 			net.WriteUInt(math.Clamp(Queue[i]["index"],0,255),8)
@@ -146,14 +124,14 @@ local function NetMessage(self)
 	end
 	net.Broadcast()
 end
-
+--Run on e2 death
 registerCallback("destruct",function(self)
 	net.Start("H2DKillMsg")
 	net.WriteBool(true)
 	net.WriteUInt(self.entity:EntIndex(),16)
 	net.Broadcast()
 end)
-
+--run after every execution / cycle of the e2 code
 registerCallback("postexecute",function(self)
 	if(self.data.Pending) then 
 		PushToSST(self.data.Queue,self.entity:EntIndex())
@@ -162,9 +140,9 @@ registerCallback("postexecute",function(self)
 		self.data.Queue = {}
 	end
 end)
-
+--run when a e2 is created
 registerCallback("construct",function(self)
-self.data.Queue = {} --the table of all the things to be sent
+self.data.Queue = {} --the change table of all data
 self.data.Pending = false -- Set to true whenever new information is added to the table queue
 end)
 

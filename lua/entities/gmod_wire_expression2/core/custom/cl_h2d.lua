@@ -10,15 +10,12 @@ E2Helper.Descriptions["setH2DBeamColor(nxv4)"] = "Sets the colour of the beam wi
 
 print("H2D CLIENTSIDE INIT")
 local H2DBeamTable = {}
---now I need to somehow "hook" myself onto my own net message 
 
---it would be far to easy if copying this over worked
+--identical to PushToSST - meaning the tables on both sides are identical too
 local void function PushToCST(Changes,e2id)
 	if Changes ~= nil then
-
 		-- Make sure the e2 is in the gTable
 		if H2DBeamTable[e2id] == nil then H2DBeamTable[e2id] = {} end
-
 		-- Loop through the change tables
 		for I = 0 , #Changes do
 			-- Make sure it's not an empty table
@@ -40,6 +37,12 @@ local void function PushToCST(Changes,e2id)
 		end
 	end
 end
+
+--Uses ENUM : 1 - CreateBeam
+--          : 2 - Set Pos
+--          : 3 - Set Color
+--Recives all of the data from the server (an almost identical mirror of NetMessage())
+
 net.Receive("H2DNetMsg", function(len) 
 	local Queue = {}
 	local QueueLength = net.ReadUInt(10)
@@ -51,7 +54,7 @@ net.Receive("H2DNetMsg", function(len)
 		Queue[i]["ownerE2"] = e2id
 		
 		if ENUM == 0 then 
-			--CreateBeam - ALL THE THINGS
+			--CreateBeam -
 			Queue[i]["index"] = net.ReadUInt(8)
 			Queue[i]["startPos"] = net.ReadVector()
 			Queue[i]["endPos"] = net.ReadVector()
@@ -65,12 +68,15 @@ net.Receive("H2DNetMsg", function(len)
 			Queue[i]["startPos"] = net.ReadVector()
 			Queue[i]["endPos"] = net.ReadVector()
 		elseif ENUM == 2 then
+			--SetBeamColor
 			Queue[i]["index"] = net.ReadUInt(8)
 			Queue[i]["color"] = net.ReadColor()
 		end
 	end
 	PushToCST(Queue,e2id)
 end)
+
+--Receives the kill message, if bool is true then kills all beams on the e2
 net.Receive("H2DKillMsg", function(len)
 	local KillAll = net.ReadBool()
 	local e2id
@@ -85,6 +91,7 @@ net.Receive("H2DKillMsg", function(len)
 	end
 end)
 
+--Actualy renders the beam, this runs through the entire beam table every time the client renders something (so fps)
 hook.Add("PreDrawTranslucentRenderables","H2DBeamHook",function()
 		for k,E2 in pairs(H2DBeamTable) do
 				if #E2>0 then
@@ -100,7 +107,6 @@ hook.Add("PreDrawTranslucentRenderables","H2DBeamHook",function()
 								
 								render.SetColorMaterial(Col1)
 								render.SetMaterial( Beam )
-								--TODO: Steal steeveos code and reverse engineer it into here.
 								render.DrawBeam( Vec1 , Vec2 , Num1, Cent -Num2,Cent+ Num2, Col1 )
 						end
 				end
