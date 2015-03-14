@@ -96,10 +96,11 @@ hook.Add("PreDrawTranslucentRenderables","HobBeamHook",function()
 								local Num2 = E2[I]["textureScale"]
 								local Col1 = E2[I]["color"]
 								local Beam = Material( Str1 )  
+								local Cent = Beam:Width / 2
 								render.SetColorMaterial(Col1)
 								render.SetMaterial( Beam )
 								--TODO: Steal steeveos code and reverse engineer it into here.
-								render.DrawBeam( Vec1 , Vec2 , Num1, Num2, Num2, Col1 )
+								render.DrawBeam( Vec1 , Vec2 , Num1,Cent-Num2,Cent+Num2, Col1 )
 						end
 				end
 		end
