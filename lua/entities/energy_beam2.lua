@@ -8,7 +8,7 @@ ENT.Base = "base_entity"
 ENT.RenderGroup = RENDERGROUP_BOTH
 
 if SERVER then
-
+print("ENERGYBEAM2 INIT")
 if (StarGate==nil or StarGate.CheckModule==nil or not StarGate.CheckModule("entweapon")) then return end
 
 AddCSLuaFile()
