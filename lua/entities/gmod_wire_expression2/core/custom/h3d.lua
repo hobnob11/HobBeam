@@ -1,8 +1,8 @@
 E2Lib.RegisterExtension("H3DBeam",true) -- makes the extension, true to load by defualt
 AddCSLuaFile( "entities/energy_beam.lua" )
 AddCSLuaFile( "entities/energy_beam2.lua" )
+AddCSLuaFile( "entities/asgard_beam.lua" )
 --global vars
-
 
 --instanced vars
 print("H3D SERVERSIDE INIT")
@@ -12,7 +12,7 @@ registerCallback("construct",function(self)
 end)
 
 e2function entity createH3DBeam(index)
-
+	
 	self.Entity = self.entity
 	local FiringPos = self.Entity:GetPos() + self.Entity:GetUp()*70;
 	self.Target = self.Entity:GetPos() + self.Entity:GetUp()*200;

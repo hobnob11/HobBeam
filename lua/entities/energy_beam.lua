@@ -6,7 +6,7 @@ ENT.Author           = "PyroSpirit"
 ENT.Contact		      = "forums.facepunchstudios.com"
 
 if SERVER then
-print("ENERGYBEAM1 INIT")
+
 if (StarGate==nil or StarGate.CheckModule==nil or not StarGate.CheckModule("entweapon")) then return end
 
 AddCSLuaFile()
