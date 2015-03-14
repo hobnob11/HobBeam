@@ -1,15 +1,16 @@
-E2Lib.RegisterExtension("hob",true) -- makes the extension, true to load by defualt
-util.AddNetworkString("HobNetMsg")
---utl.AddNetworkString("HobKillMsg")
+E2Lib.RegisterExtension("H2DBeam",true) -- makes the extension, true to load by defualt
+util.AddNetworkString("H2DNetMsg")
+util.AddNetworkString("H2DKillMsg")
+print("H2D SERVERSIDE INIT")
 --Putting this here should make a global table to store all beams on the server?
-local HBeamTable = {}
+local H2DBeamTable = {}
 
 -- i assume that both this code is actually ran and also that it only needs to be run once
 -- i could have a grave mis-understanding of how net messages work...
-util.AddNetworkString("HobKillMsg")
+
 
 --    |----------------------------------------------------------| -this table is confusing as shit so here goes
---    |                       HBeamTable{}                       | This table is global to all e2's for everyone on the server
+--    |                       H2DBeamTable{}                       | This table is global to all e2's for everyone on the server
 --    |----------------------------------------------------------| it contains a table of all of the e2's that have created beams
 --    |  ["ownerE2"]=1   |   ["ownerE2"]=2   |   ["ownerE2"]=3   |-these tables are stored using the related e2 entity index's as keys 
 --    |------------------|-------------------|-------------------| and contain all of the information for the beams that that e2 has created 
@@ -26,7 +27,7 @@ local void function PushToSST(Changes,e2id)
 	if Changes ~= nil then
 
 		-- Make sure the e2 is in the gTable
-		if HBeamTable[e2id] == nil then HBeamTable[e2id] = {} end
+		if H2DBeamTable[e2id] == nil then H2DBeamTable[e2id] = {} end
 
 		-- Loop through the change tables
 		for i = 0 , #Changes do
@@ -37,12 +38,12 @@ local void function PushToSST(Changes,e2id)
 					-- Grab the index, for use
 					local index = Changes[i]["index"]
 					-- Make sure the index is within the e2 in the gTable
-					if HBeamTable[e2id][index] == nil then HBeamTable[e2id][index] = {} end
+					if H2DBeamTable[e2id][index] == nil then H2DBeamTable[e2id][index] = {} end
 
 					-- Loop through the change table to add 
 					for Key,Value in pairs(Changes[i]) do  
 						-- Add it.
-						HBeamTable[e2id][index][Key] = Value
+						H2DBeamTable[e2id][index][Key] = Value
 					end
 				end
 			end
@@ -50,7 +51,7 @@ local void function PushToSST(Changes,e2id)
 	end
 end
 __e2setcost(30)
-e2function void createHBeam(index, vector startPos, vector endPos, width, string material, textureScale, vector4 color)
+e2function void createH2DBeam(index, vector startPos, vector endPos, width, string material, textureScale, vector4 color)
 	--queue the information for the client somehow
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity:EntIndex()
@@ -67,7 +68,7 @@ e2function void createHBeam(index, vector startPos, vector endPos, width, string
 	
 end
 __e2setcost(10)
-e2function void setHBeamPos(index, vector startPos, vector endPos)
+e2function void setH2DBeamPos(index, vector startPos, vector endPos)
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity:EntIndex()
 	Table2["index"]=index
@@ -78,7 +79,7 @@ e2function void setHBeamPos(index, vector startPos, vector endPos)
 	self.data.Pending = true 
 end
 __e2setcost(5)
-e2function void setHBeamColor(index, vector4 color)
+e2function void setH2DBeamColor(index, vector4 color)
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity:EntIndex()
 	Table2["index"]=index
@@ -89,9 +90,9 @@ e2function void setHBeamColor(index, vector4 color)
 end
 	
 __e2setcost(2)
-e2function void killHBeam(index)
+e2function void killH2DBeam(index)
 	local e2id = self.entity:EntIndex()
-	net.Start("HobKillMsg")
+	net.Start("H2DKillMsg")
 	net.WriteBool(false)
 	net.WriteUInt(e2id,16)
 	net.WriteUInt(index,12)
@@ -103,15 +104,15 @@ end
 --------------------------------------------------------
 --Creates a net message and then sends it
 
---gets the queue of information to be sent to the client, puts it in HobNetMsg and sends it
+--gets the queue of information to be sent to the client, puts it in H2DNetMsg and sends it
 --probably...
 
 --
--- Gets the queue of information to be sent to the client, puts it in HobNetMsg and sends it
+-- Gets the queue of information to be sent to the client, puts it in H2DNetMsg and sends it
 --
 --divran magic go!
 local function NetMessage(self)
-	net.Start("HobNetMsg")
+	net.Start("H2DNetMsg")
 	local Queue = self.data.Queue
 	local QueueLength = #self.data.Queue
 	net.WriteUInt(QueueLength,10)
@@ -147,7 +148,7 @@ local function NetMessage(self)
 end
 
 registerCallback("destruct",function(self)
-	net.Start("HobKillMsg")
+	net.Start("H2DKillMsg")
 	net.WriteBool(true)
 	net.WriteUInt(self.entity:EntIndex(),16)
 	net.Broadcast()
