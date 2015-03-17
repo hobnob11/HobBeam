@@ -1,7 +1,4 @@
 E2Lib.RegisterExtension("H3DBeam",true) -- makes the extension, true to load by defualt
-AddCSLuaFile( "entities/energy_beam.lua" )
-AddCSLuaFile( "entities/energy_beam2.lua" )
-AddCSLuaFile( "entities/asgard_beam.lua" )
 --global vars
 
 --instanced vars

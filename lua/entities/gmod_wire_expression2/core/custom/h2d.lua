@@ -1,16 +1,16 @@
-E2Lib.RegisterExtension("H2DBeam",true) -- makes the extension, true to load by defualt
-util.AddNetworkString("H2DNetMsg")
-util.AddNetworkString("H2DKillMsg")
-print("H2D SERVERSIDE INIT")
+E2Lib.RegisterExtension("2DBeam",true) -- makes the extension, true to load by defualt
+util.AddNetworkString("2DNetMsg")
+util.AddNetworkString("2DKillMsg")
+print("2D SERVERSIDE INIT")
 --Global to all e2's table containing all beams 
-local H2DBeamTable = {}
+local Beam2DTable = {}
 
 --push to ServerSideTable
 local void function PushToSST(Changes,e2id)
 	if Changes ~= nil then
 
 		-- Make sure the e2 is in the gTable
-		if H2DBeamTable[e2id] == nil then H2DBeamTable[e2id] = {} end
+		if Beam2DTable[e2id] == nil then Beam2DTable[e2id] = {} end
 
 		-- Loop through the change tables
 		for i = 0 , #Changes do
@@ -21,12 +21,12 @@ local void function PushToSST(Changes,e2id)
 					-- Grab the index, for use
 					local index = Changes[i]["index"]
 					-- Make sure the index is within the e2 in the gTable
-					if H2DBeamTable[e2id][index] == nil then H2DBeamTable[e2id][index] = {} end
+					if Beam2DTable[e2id][index] == nil then Beam2DTable[e2id][index] = {} end
 
 					-- Loop through the change table to add 
 					for Key,Value in pairs(Changes[i]) do  
 						-- Add it.
-						H2DBeamTable[e2id][index][Key] = Value
+						Beam2DTable[e2id][index][Key] = Value
 					end
 				end
 			end
@@ -34,7 +34,7 @@ local void function PushToSST(Changes,e2id)
 	end
 end
 __e2setcost(30)
-e2function void createH2DBeam(index, vector startPos, vector endPos, width, string material, textureScale, vector4 color)
+e2function void create2DBeam(index, vector startPos, vector endPos, width, string material, textureScale, vector4 color)
 	--puts the data in a new entry in the queue
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity:EntIndex()
@@ -51,7 +51,7 @@ e2function void createH2DBeam(index, vector startPos, vector endPos, width, stri
 	
 end
 __e2setcost(10)
-e2function void setH2DBeamPos(index, vector startPos, vector endPos)
+e2function void set2DBeamPos(index, vector startPos, vector endPos)
 	--puts the data in a new entry in the queue
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity:EntIndex()
@@ -63,7 +63,7 @@ e2function void setH2DBeamPos(index, vector startPos, vector endPos)
 	self.data.Pending = true 
 end
 __e2setcost(5)
-e2function void setH2DBeamColor(index, vector4 color)
+e2function void set2DBeamColor(index, vector4 color)
 	--puts the data in a new entry in the queue
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity:EntIndex()
@@ -75,10 +75,10 @@ e2function void setH2DBeamColor(index, vector4 color)
 end
 	
 __e2setcost(2)
-e2function void killH2DBeam(index)
+e2function void kill2DBeam(index)
 	--sends a kill message for the relevant id
 	local e2id = self.entity:EntIndex()
-	net.Start("H2DKillMsg")
+	net.Start("2DKillMsg")
 	net.WriteBool(false)
 	net.WriteUInt(e2id,16)
 	net.WriteUInt(index,12)
@@ -90,7 +90,7 @@ end
 --          : 3 - Set Color
 --Sends the change table to all clients
 local function NetMessage(self)
-	net.Start("H2DNetMsg")
+	net.Start("2DNetMsg")
 	local Queue = self.data.Queue
 	local QueueLength = #self.data.Queue
 	net.WriteUInt(QueueLength,10)
@@ -126,7 +126,7 @@ local function NetMessage(self)
 end
 --Run on e2 death
 registerCallback("destruct",function(self)
-	net.Start("H2DKillMsg")
+	net.Start("2DKillMsg")
 	net.WriteBool(true)
 	net.WriteUInt(self.entity:EntIndex(),16)
 	net.Broadcast()
