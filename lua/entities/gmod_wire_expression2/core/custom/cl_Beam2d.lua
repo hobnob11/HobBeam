@@ -77,6 +77,8 @@ net.Receive("2DNetMsg", function(len)
 			Queue[i]["index"]  = net.ReadUInt(8)
 			Queue[i]["parent"] = net.ReadBool()
 			Queue[i]["pEntity"]= net.ReadEntity()
+			Queue[i]["offset1"]= net.ReadVector()
+			Queue[i]["offset2"]= net.ReadVector()
 		end
 	end
 	PushToCST(Queue,e2id)
@@ -113,9 +115,9 @@ hook.Add("PreDrawTranslucentRenderables","2DBeamHook",function()
 								
 								if E2[I]["parent"] then
 									--need to add math to make the inputted vectors local to the parented entity
-									Vec1 = E2[i]["pEntity"]:pos()
+									Vec1 = E2[i]["pEntity"]:pos()+E2[i]["offset1"]
 									--to test parenting this is hard set to just above the e2
-									Vec2 = E2[i]["pEntity"]:pos()+vec(0,0,100)
+									Vec2 = E2[i]["pEntity"]:pos()+E2[i]["offset2"]
 								end
 								
 								render.SetColorMaterial(Col1)
