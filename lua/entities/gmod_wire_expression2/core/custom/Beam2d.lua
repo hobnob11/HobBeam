@@ -88,12 +88,17 @@ end
 _e2setcost(10)
 e2function void parent2DBeam(index,entity entity)
 	--turns on the "parented" bool and gives a entity to parent too.
+	--calculates and stores the offset from the beam to the entity
+	local Offset1 = entity:WorldToLocal(Beam2DTable[self.entity:EntIndex()][index]["startPos"])
+	local Offset2 = entity:WorldToLocal(Beam2DTable[self.entity:EntIndex()][index]["endPos"])
 	local Table2 = {}
 	Table2["ownerE2"]=self.entity:EntIndex()
 	Table2["index"]=index
 	Table2["ENUM"]=3
 	Table2["parent"]=true
 	Table2["pEntity"]=entity
+	Table2["offset1"]=Offset1
+	Table2["offset2"]=Offset2
 	self.data.Queue[#self.data.Queue+1]=Table2
 	self.data.Pending = true 
 end
@@ -140,6 +145,8 @@ local function NetMessage(self)
 			net.WriteUInt(math.Clamp(Queue[i]["index"],0,255),8)
 			net.WriteBool(Queue[i]["parent"])
 			net.WriteEntity(Queue[i]["pEntity"])
+			net.WriteVector(Queue[i]["offset1"])
+			net.WriteVector(Queue[i]["offset2"])
 		end
 	end
 	net.Broadcast()
