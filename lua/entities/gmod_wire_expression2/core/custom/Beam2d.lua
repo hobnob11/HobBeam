@@ -85,9 +85,22 @@ e2function void kill2DBeam(index)
 	net.Broadcast()
 end
 
---Uses ENUM : 1 - CreateBeam
---          : 2 - Set Pos
---          : 3 - Set Color
+_e2setcost(10)
+e2function void parent2DBeam(index,entity entity)
+	--turns on the "parented" bool and gives a entity to parent too.
+	local Table2 = {}
+	Table2["ownerE2"]=self.entity:EntIndex()
+	Table2["index"]=index
+	Table2["ENUM"]=3
+	Table2["parent"]=true
+	Table2["pEntity"]=entity
+	self.data.Queue[#self.data.Queue+1]=Table2
+	self.data.Pending = true 
+end
+--Uses ENUM : 0 - CreateBeam
+--          : 1 - Set Pos
+--          : 2 - Set Color
+--          : 3 - parent 
 --Sends the change table to all clients
 local function NetMessage(self)
 	net.Start("2DNetMsg")
@@ -120,6 +133,13 @@ local function NetMessage(self)
 			net.WriteUInt(self.entity:EntIndex(),16)
 			net.WriteUInt(math.Clamp(Queue[i]["index"],0,255),8)
 			net.WriteColor(Queue[i]["color"])
+		elseif ENUM == 3 then
+		--parent
+			net.WriteUInt(ENUM,2)
+			net.WriteUInt(self.entity:EntIndex(),16)
+			net.WriteUInt(math.Clamp(Queue[i]["index"],0,255),8)
+			net.WriteBool(Queue[i]["parent"])
+			net.WriteEntity(Queue[i]["pEntity"])
 		end
 	end
 	net.Broadcast()
