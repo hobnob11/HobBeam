@@ -66,8 +66,14 @@ net.Receive("2DNetMsg", function(len)
 		elseif ENUM == 1 then
 			--SetBeamPos
 			Queue[i]["index"] = net.ReadUInt(8)
-			Queue[i]["startPos"] = net.ReadVector()
-			Queue[i]["endPos"] = net.ReadVector()
+			local parent = net.ReadBool()
+			if(parent)then
+				Queue[i]["offset1"] = net.ReadVector()
+				Queue[i]["offset2"] = net.ReadVector()
+			else
+				Queue[i]["startPos"] = net.ReadVector()
+				Queue[i]["endPos"] = net.ReadVector()
+			end
 		elseif ENUM == 2 then
 			--SetBeamColor
 			Queue[i]["index"] = net.ReadUInt(8)
