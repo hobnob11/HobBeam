@@ -1,0 +1,14 @@
+15:27 - Divran: line 63 has a syntax error
+15:27 - Divran: you forgot to convert from E2 vector to Gmod vector
+15:28 - Divran: you could make local function convertVector(e2vec) return whatever blah blah end
+15:28 - Divran: at the top of the file
+15:28 - Divran: also no that math is incorrect
+15:29 - Divran: on line 124 of cl_beam2d it should be entity:LocalToWorld(offset)
+15:29 - Divran: not entity:pos() + offset
+15:29 - Divran: and line 126 too
+15:29 - Divran: also consider changing the name of all your functions to be like other libraries such as holograms
+15:29 - Divran: holoPos, holoCreate, holoModel, etc
+15:30 - Divran: so it starts with the name of the library
+15:30 - Divran: its not necessary, but it makes it easier to find functions in that library using the e2helper for example
+
+this code is like 40% me, 20% ninja and 40% divran lol 
