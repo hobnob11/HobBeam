@@ -57,8 +57,14 @@ e2function void set2DBeamPos(index, vector startPos, vector endPos)
 	Table2["ownerE2"]=self.entity:EntIndex()
 	Table2["index"]=index
 	Table2["ENUM"]=1
-	Table2["startPos"]=Vector(startPos[1],startPos[2],startPos[3])
-	Table2["endPos"] = Vector(endPos[1],endPos[2],endPos[3])
+	if(Beam2DTable[self.entity:EntIndex()]["parent"])then
+		local entity = Beam2DTable[self.entity:EntIndex()]["pEntity"]
+		Table2["offset1"] = entity:WorldToLocal(startPos)
+		Table2{"offset2"] = entity:WorldToLocal(endPos)
+	else
+		Table2["startPos"]=Vector(startPos[1],startPos[2],startPos[3])
+		Table2["endPos"] = Vector(endPos[1],endPos[2],endPos[3])
+	end
 	self.data.Queue[#self.data.Queue+1]=Table2
 	self.data.Pending = true 
 end
@@ -130,8 +136,14 @@ local function NetMessage(self)
 			net.WriteUInt(ENUM,2)
 			net.WriteUInt(self.entity:EntIndex(),16)
 			net.WriteUInt(math.Clamp(Queue[i]["index"],0,255),8)
-			net.WriteVector(Queue[i]["startPos"])
-			net.WriteVector(Queue[i]["endPos"])
+			net.WriteBool(Queue[i]["parent"]
+			if(Queue[i]["parent"])then
+				net.WriteVector(Queue[i]["offset1"])
+				net.WriteVector(Queue[i]["offset2"])
+			else
+				net.WriteVector(Queue[i]["startPos"])
+				net.WriteVector(Queue[i]["endPos"])
+			end
 		elseif ENUM == 2 then 
 		--setBeamColor
 			net.WriteUInt(ENUM,2)
