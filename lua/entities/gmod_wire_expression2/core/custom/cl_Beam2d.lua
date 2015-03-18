@@ -7,7 +7,8 @@ E2Helper.Descriptions["set2DBeamPos(nvv)"] = "Sets the position of the 2D Beam! 
 E2Helper.Descriptions["kill2DBeam(n)"] = "Kills the beam with given index"
 --e2function void set2DBeamColor(index, vector4 color)
 E2Helper.Descriptions["set2DBeamColor(nxv4)"] = "Sets the colour of the beam with given index"
-
+--e2function void parent2DBeam(index,entity entity)
+E2Helper.Descriptions["parent2DBeam(ne)"] = "Parents the beam to the entity"
 print("2D CLIENTSIDE INIT")
 local Beam2DTable = {}
 
@@ -71,6 +72,11 @@ net.Receive("2DNetMsg", function(len)
 			--SetBeamColor
 			Queue[i]["index"] = net.ReadUInt(8)
 			Queue[i]["color"] = net.ReadColor()
+		elseif ENUM == 3 then
+		--parent
+			Queue[i]["index"]  = net.ReadUInt(8)
+			Queue[i]["parent"] = net.ReadBool()
+			Queue[i]["pEntity"]= net.ReadEntity()
 		end
 	end
 	PushToCST(Queue,e2id)
@@ -104,6 +110,13 @@ hook.Add("PreDrawTranslucentRenderables","2DBeamHook",function()
 								local Col1 = E2[I]["color"]
 								local Beam = Material( Str1 ) 
 								local Cent = Beam:Width() * 0.5
+								
+								if E2[I]["parent"] then
+									--need to add math to make the inputted vectors local to the parented entity
+									Vec1 = E2[i]["pEntity"]:pos()
+									--to test parenting this is hard set to just above the e2
+									Vec2 = E2[i]["pEntity"]:pos()+vec(0,0,100)
+								end
 								
 								render.SetColorMaterial(Col1)
 								render.SetMaterial( Beam )
